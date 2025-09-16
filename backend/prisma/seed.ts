@@ -1,13 +1,16 @@
-import { PrismaClient } from '@prisma/client'
-import { RoleType } from '../src/generated/prisma'
+import { PrismaClient, RoleType } from '@prisma/client'
+
 const prisma = new PrismaClient()
 
 async function main() {
   // Seed initial data here
-  const roles = [RoleType.ADMIN, RoleType.USER, RoleType.MEMBER]
+  const roles = [RoleType.ADMIN, RoleType.USER, RoleType.MEMBER, RoleType.OWNER]
   for (const r of roles) {
+    const roleExists = await prisma.role.findFirst({
+      where: { role: r }
+    })
     await prisma.role.upsert({
-      where: { id: r },
+      where: { id: roleExists?.id || '' },
       update: {},
       create: { role: r }
     })
