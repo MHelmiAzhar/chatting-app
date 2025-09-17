@@ -1,6 +1,7 @@
 import { RoleType } from '../generated/prisma'
 import prisma from '../utils/prisma'
 import { SignUpValues } from '../utils/schema/user'
+import crypto from 'node:crypto'
 
 export const checkEmailExists = async (email: string) => {
   return await prisma.user.count({
@@ -25,5 +26,44 @@ export const createUser = async (data: SignUpValues, photo: string) => {
       photo,
       role_id: role.id
     }
+  })
+}
+
+export const findUserByEmail = async (email: string) => {
+  return await prisma.user.findFirstOrThrow({
+    where: { email }
+  })
+}
+
+export const createPasswordReset = async (email: string) => {
+  const user = await findUserByEmail(email)
+  const token = crypto.randomBytes(32).toString('hex')
+
+  return await prisma.passwordReset.create({
+    data: {
+      user_id: user.id,
+      token
+    }
+  })
+}
+
+export const findPasswordResetByToken = async (token: string) => {
+  return await prisma.passwordReset.findFirstOrThrow({
+    where: { token },
+    include: { user: { select: { email: true } } }
+  })
+}
+
+export const updateUserPassword = async (email: string, password: string) => {
+  const user = await findUserByEmail(email)
+  return await prisma.user.update({
+    where: { id: user.id },
+    data: { password }
+  })
+}
+
+export const deleteTokenResetPasswordById = async (id: string) => {
+  return await prisma.passwordReset.delete({
+    where: { id }
   })
 }

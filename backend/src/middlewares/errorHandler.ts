@@ -8,6 +8,7 @@ export default function errorHandler(
   next: NextFunction
 ) {
   const errorCatched = error
+  console.log(errorCatched)
 
   if (errorCatched instanceof Prisma.PrismaClientKnownRequestError) {
     return res.status(500).json({
