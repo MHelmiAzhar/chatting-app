@@ -5,4 +5,10 @@ export const groupFreeSchema = z.object({
   about: z.string()
 })
 
+export const groupPaidSchema = groupFreeSchema.extend({
+  price: z.string(),
+  benefits: z.array(z.string()).min(1, 'Benefits is required')
+})
+
 export type GroupFreeValues = z.infer<typeof groupFreeSchema>
+export type GroupPaidValues = z.infer<typeof groupPaidSchema>

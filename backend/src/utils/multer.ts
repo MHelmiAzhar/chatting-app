@@ -18,6 +18,14 @@ if (!fs.existsSync(uploadDirGroupPhoto)) {
   fs.mkdirSync(uploadDirGroupPhoto, { recursive: true })
 }
 
+const uploadDirGroupAssets = path.join(
+  process.cwd(),
+  'public/assets/uploads/group_assets'
+)
+if (!fs.existsSync(uploadDirGroupAssets)) {
+  fs.mkdirSync(uploadDirGroupAssets, { recursive: true })
+}
+
 export const storageUserPhoto = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDirUserPhoto)
@@ -30,24 +38,34 @@ export const storageUserPhoto = multer.diskStorage({
   }
 })
 
-export const storageGroupPhoto = multer.diskStorage({
+export const storageGroup = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadDirGroupPhoto)
+    if (file.fieldname === 'photo') {
+      cb(null, uploadDirGroupPhoto)
+    } else {
+      cb(null, uploadDirGroupAssets)
+    }
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
     const extention = file.mimetype.split('/')[1]
-    const fileName = `photo-${uniqueSuffix}.${extention}`
+    const fileName = `${file.fieldname}-${uniqueSuffix}.${extention}`
     cb(null, fileName)
   }
 })
 
-export const uploadPhoto = multer({
-  storage: storageUserPhoto,
-  fileFilter(req, file, cb) {
-    if (!file.mimetype.startsWith('image/')) {
-      cb(null, false)
+export const upload = (storage: multer.StorageEngine) =>
+  multer({
+    storage,
+    fileFilter(req, file, cb) {
+      if (file.fieldname === 'assets') {
+        cb(null, true)
+        return
+      }
+      if (!file.mimetype.startsWith('image/')) {
+        cb(null, false)
+      } else {
+        cb(null, true)
+      }
     }
-    cb(null, true)
-  }
-})
+  })

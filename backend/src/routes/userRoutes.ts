@@ -1,10 +1,14 @@
 import express from 'express'
-import { uploadPhoto } from '../utils/multer'
+import { storageUserPhoto, upload } from '../utils/multer'
 import * as userController from '../controllers/userController'
 
 const userRoutes = express.Router()
 
-userRoutes.post('/sign-up', uploadPhoto.single('photo'), userController.signUp)
+userRoutes.post(
+  '/sign-up',
+  upload(storageUserPhoto).single('photo'),
+  userController.signUp
+)
 
 userRoutes.post('/sign-in', userController.signIn)
 userRoutes.post('/reset-password', userController.getEmailReset)

@@ -1,5 +1,5 @@
 import prisma from '../utils/prisma'
-import { GroupFreeValues } from '../utils/schema/group'
+import { GroupFreeValues, GroupPaidValues } from '../utils/schema/group'
 import * as userRepository from './userRepositories'
 
 export const createGroup = async (
@@ -31,4 +31,48 @@ export const createGroup = async (
       }
     }
   })
+}
+
+export const createPaidGroup = async (
+  data: GroupPaidValues,
+  photo: string,
+  userId: string,
+  assets?: string[]
+) => {
+  const owner = await userRepository.findRole('OWNER')
+
+  const group = await prisma.group.create({
+    data: {
+      name: data.name,
+      about: data.about,
+      photo: photo,
+      price: parseInt(data.price),
+      type: 'PAID',
+      room: {
+        create: {
+          created_by: userId,
+          name: data.name,
+          room_member: {
+            create: {
+              user_id: userId,
+              role_id: owner?.id || ''
+            }
+          },
+          is_group: true
+        }
+      }
+    }
+  })
+
+  if (assets && assets.length > 0) {
+    for (const asset of assets) {
+      await prisma.groupAsset.create({
+        data: {
+          group_id: group.id,
+          file_name: asset
+        }
+      })
+    }
+  }
+  return group
 }
