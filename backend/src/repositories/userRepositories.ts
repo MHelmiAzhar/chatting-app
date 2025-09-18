@@ -3,6 +3,12 @@ import prisma from '../utils/prisma'
 import { SignUpValues } from '../utils/schema/user'
 import crypto from 'node:crypto'
 
+export const findUserById = async (id: string) => {
+  return await prisma.user.findUniqueOrThrow({
+    where: { id },
+    include: { role: true }
+  })
+}
 export const checkEmailExists = async (email: string) => {
   return await prisma.user.count({
     where: { email }
