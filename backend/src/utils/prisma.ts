@@ -7,7 +7,18 @@ const prisma = new PrismaClient().$extends({
         needs: { photo: true },
         compute(data: any) {
           if (data.photo) {
-            return `${process.env.BASE_ASSET_URL}${data.photo}`
+            return `${process.env.URL_ASSET_PHOTO}${data.photo}`
+          }
+          return null
+        }
+      }
+    },
+    group: {
+      photo_url: {
+        needs: { photo: true },
+        compute(data: any) {
+          if (data.photo) {
+            return `${process.env.URL_ASSET_GROUP}${data.photo}`
           }
           return null
         }

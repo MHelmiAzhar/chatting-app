@@ -22,4 +22,22 @@ groupRoutes.post(
   groupController.createPaidGroup
 )
 
+groupRoutes.put(
+  '/free/:group_id',
+  verifyToken,
+  upload(storageGroup).single('photo'),
+  groupController.updateFreeGroup
+)
+
+groupRoutes.put(
+  '/paid/:group_id',
+  verifyToken,
+  upload(storageGroup).fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'assets' }
+  ]),
+  groupController.updatePaidGroup
+)
+
+groupRoutes.get('/', groupController.getDiscoverGroups)
 export default groupRoutes

@@ -2,18 +2,20 @@ import prisma from '../utils/prisma'
 import { GroupFreeValues, GroupPaidValues } from '../utils/schema/group'
 import * as userRepository from './userRepositories'
 
-export const createGroup = async (
+export const upsertFreeGroup = async (
   data: GroupFreeValues,
-  photo: string,
-  userId: string
+  userId: string,
+  photo?: string,
+  groupId?: string
 ) => {
   const owner = await userRepository.findRole('OWNER')
 
-  return await prisma.group.create({
-    data: {
+  return await prisma.group.upsert({
+    where: { id: groupId || '' },
+    create: {
       name: data.name,
       about: data.about,
-      photo: photo,
+      photo: photo ?? '',
       price: 0,
       type: 'FREE',
       room: {
@@ -29,24 +31,32 @@ export const createGroup = async (
           is_group: true
         }
       }
+    },
+    update: {
+      name: data.name,
+      about: data.about,
+      photo: photo
     }
   })
 }
 
-export const createPaidGroup = async (
+export const upsertPaidGroup = async (
   data: GroupPaidValues,
-  photo: string,
   userId: string,
-  assets?: string[]
+  photo?: string,
+  assets?: string[],
+  groupId?: string
 ) => {
   const owner = await userRepository.findRole('OWNER')
 
-  const group = await prisma.group.create({
-    data: {
+  const group = await prisma.group.upsert({
+    where: { id: groupId || '' },
+    create: {
       name: data.name,
       about: data.about,
-      photo: photo,
+      photo: photo ?? '',
       price: parseInt(data.price),
+      benefit: data.benefits,
       type: 'PAID',
       room: {
         create: {
@@ -61,6 +71,13 @@ export const createPaidGroup = async (
           is_group: true
         }
       }
+    },
+    update: {
+      name: data.name,
+      about: data.about,
+      photo: photo,
+      price: parseInt(data.price),
+      benefit: data.benefits
     }
   })
 
@@ -75,4 +92,35 @@ export const createPaidGroup = async (
     }
   }
   return group
+}
+
+export const findGroupById = async (id: string) => {
+  return await prisma.group.findFirstOrThrow({
+    where: { id },
+    include: { assets: true }
+  })
+}
+
+export const getDiscoverGroups = async (name?: string) => {
+  return await prisma.group.findMany({
+    where: {
+      name: name ? { contains: name as string, mode: 'insensitive' } : undefined
+    },
+    select: {
+      photo: true,
+      id: true,
+      name: true,
+      about: true,
+      type: true,
+      room: {
+        select: {
+          _count: {
+            select: {
+              room_message: true
+            }
+          }
+        }
+      }
+    }
+  })
 }

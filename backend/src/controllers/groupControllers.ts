@@ -26,15 +26,48 @@ export const createFreeGroup = async (
         .json({ success: false, message: 'Photo is required' })
     }
 
-    const group = await groupServices.createFreeGroup(
+    const group = await groupServices.upsertFreeGroup(
       parse.data,
-      req.file.filename,
-      req.user?.id || ''
+      req.user?.id || '',
+      req.file.filename
     )
 
     return res
       .status(201)
       .json({ success: true, message: 'Group created', data: group })
+  } catch (error) {
+    next(error)
+  }
+}
+export const updateFreeGroup = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const groupId = req.params.group_id
+    const parse = groupFreeSchema.safeParse(req.body)
+    if (!parse.success) {
+      const errMessage = parse.error.issues.map(
+        (err) => `${err.path} - ${err.message}`
+      )
+      return res.status(400).json({
+        success: false,
+        message: 'Validation Error',
+        detail: errMessage
+      })
+    }
+
+    const group = await groupServices.upsertFreeGroup(
+      parse.data,
+      req.user?.id || '',
+      req.file?.filename,
+      groupId
+    )
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Group updated', data: group })
   } catch (error) {
     next(error)
   }
@@ -76,16 +109,75 @@ export const createPaidGroup = async (
 
     const assets = file.assets.map((asset) => asset.filename)
 
-    const group = await groupServices.createPaidGroup(
+    const group = await groupServices.upsertPaidGroup(
       parse.data,
-      file.photo[0].filename,
       req.user?.id || '',
+      file.photo[0].filename,
       assets
     )
 
     return res
       .status(201)
       .json({ success: true, message: 'Group created', data: group })
+  } catch (error) {
+    next(error)
+  }
+}
+export const updatePaidGroup = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const groupId = req.params.group_id
+    const parse = groupPaidSchema.safeParse(req.body)
+    if (!parse.success) {
+      const errMessage = parse.error.issues.map(
+        (err) => `${err.path} - ${err.message}`
+      )
+      return res.status(400).json({
+        success: false,
+        message: 'Validation Error',
+        detail: errMessage
+      })
+    }
+    const file = req.files as {
+      photo?: Express.Multer.File[]
+      assets?: Express.Multer.File[]
+    }
+    console.log('ini file', req)
+
+    const assets = file?.assets?.map((asset) => asset.filename)
+
+    const group = await groupServices.upsertPaidGroup(
+      parse.data,
+      req.user?.id || '',
+      file.photo?.[0]?.filename ?? '',
+      assets,
+      groupId
+    )
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Group updated', data: group })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getDiscoverGroups = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { name } = req.query
+    const groups = await groupServices.getDiscoverGroups(
+      name as string | undefined
+    )
+    return res
+      .status(200)
+      .json({ success: true, message: 'Discover groups fetched', data: groups })
   } catch (error) {
     next(error)
   }
