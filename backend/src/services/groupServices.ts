@@ -77,3 +77,7 @@ export const getDiscoverGroups = async (name?: string) => {
 export const getDiscoverPeople = async (name?: string, user_id?: string) => {
   return await groupRepositories.getDiscoverPeople(name, user_id)
 }
+
+export const findDetailGroup = async (id: string, user_id: string) => {
+  return await groupRepositories.findDetailGroup(id, user_id)
+}

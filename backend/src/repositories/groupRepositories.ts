@@ -138,3 +138,41 @@ export const getDiscoverPeople = async (name?: string, user_id?: string) => {
     }
   })
 }
+
+export const findDetailGroup = async (id: string, user_id: string) => {
+  return await prisma.group.findFirstOrThrow({
+    where: { id, room: { created_by: user_id } },
+    select: {
+      id: true,
+      name: true,
+      about: true,
+      photo_url: true,
+      price: true,
+      type: true,
+      assets: {
+        select: { file_name: true }
+      },
+      room: {
+        select: {
+          room_member: {
+            take: 1,
+            where: { user_id },
+            select: {
+              user: {
+                select: {
+                  name: true,
+                  photo_url: true
+                }
+              }
+            }
+          },
+          _count: {
+            select: {
+              room_member: true
+            }
+          }
+        }
+      }
+    }
+  })
+}

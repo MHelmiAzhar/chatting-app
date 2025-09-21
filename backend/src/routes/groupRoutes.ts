@@ -40,6 +40,11 @@ groupRoutes.put(
 )
 
 groupRoutes.get('/peoples', verifyToken, groupController.getDiscoverPeople)
+groupRoutes.get(
+  '/detail/:group_id',
+  verifyToken,
+  groupController.findDetailGroup
+)
 groupRoutes.get('/', verifyToken, groupController.getDiscoverGroups)
 
 export default groupRoutes
