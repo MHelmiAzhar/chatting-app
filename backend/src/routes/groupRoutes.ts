@@ -39,5 +39,7 @@ groupRoutes.put(
   groupController.updatePaidGroup
 )
 
-groupRoutes.get('/', groupController.getDiscoverGroups)
+groupRoutes.get('/peoples', verifyToken, groupController.getDiscoverPeople)
+groupRoutes.get('/', verifyToken, groupController.getDiscoverGroups)
+
 export default groupRoutes

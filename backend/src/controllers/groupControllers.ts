@@ -182,3 +182,23 @@ export const getDiscoverGroups = async (
     next(error)
   }
 }
+
+export const getDiscoverPeople = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { name } = req.query
+    const user_id = req.user?.id
+    const people = await groupServices.getDiscoverPeople(
+      name as string | undefined,
+      user_id
+    )
+    return res
+      .status(200)
+      .json({ success: true, message: 'Discover people fetched', data: people })
+  } catch (error) {
+    next(error)
+  }
+}

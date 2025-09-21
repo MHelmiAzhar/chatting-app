@@ -124,3 +124,17 @@ export const getDiscoverGroups = async (name?: string) => {
     }
   })
 }
+
+export const getDiscoverPeople = async (name?: string, user_id?: string) => {
+  return await prisma.user.findMany({
+    where: {
+      id: { not: user_id },
+      name: name ? { contains: name as string, mode: 'insensitive' } : undefined
+    },
+    select: {
+      id: true,
+      name: true,
+      photo_url: true
+    }
+  })
+}

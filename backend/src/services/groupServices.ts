@@ -73,3 +73,7 @@ export const upsertPaidGroup = async (
 export const getDiscoverGroups = async (name?: string) => {
   return await groupRepositories.getDiscoverGroups(name)
 }
+
+export const getDiscoverPeople = async (name?: string, user_id?: string) => {
+  return await groupRepositories.getDiscoverPeople(name, user_id)
+}
