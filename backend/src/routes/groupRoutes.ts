@@ -45,6 +45,7 @@ groupRoutes.get(
   verifyToken,
   groupController.findDetailGroup
 )
+groupRoutes.get('/own_groups', verifyToken, groupController.getMyOwnGroups)
 groupRoutes.get('/', verifyToken, groupController.getDiscoverGroups)
 
 export default groupRoutes

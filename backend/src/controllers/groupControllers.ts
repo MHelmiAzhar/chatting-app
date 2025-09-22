@@ -219,3 +219,18 @@ export const findDetailGroup = async (
     next(error)
   }
 }
+
+export const getMyOwnGroups = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await groupServices.getMyOwnGroups(req.user?.id || '')
+    return res
+      .status(200)
+      .json({ success: true, message: 'My own groups fetched', data })
+  } catch (error) {
+    next(error)
+  }
+}

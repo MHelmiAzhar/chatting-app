@@ -176,3 +176,31 @@ export const findDetailGroup = async (id: string, user_id: string) => {
     }
   })
 }
+
+export const getMyOwnGroups = async (user_id: string) => {
+  return await prisma.group.findMany({
+    where: { room: { created_by: user_id } },
+    select: {
+      id: true,
+      name: true,
+      photo_url: true,
+      type: true,
+      room: {
+        select: {
+          _count: {
+            select: {
+              room_member: true
+            }
+          },
+          id: true
+        }
+      }
+    }
+  })
+}
+
+export const getTotalMembers = async (room_ids: string[]) => {
+  return await prisma.roomMember.count({
+    where: { room_id: { in: room_ids } }
+  })
+}

@@ -81,3 +81,32 @@ export const getDiscoverPeople = async (name?: string, user_id?: string) => {
 export const findDetailGroup = async (id: string, user_id: string) => {
   return await groupRepositories.findDetailGroup(id, user_id)
 }
+
+export const getMyOwnGroups = async (user_id: string) => {
+  const group = await groupRepositories.getMyOwnGroups(user_id)
+  const vipGroups = group.filter((g) => {
+    return g.type === 'PAID'
+  }).length
+
+  const freeGroups = group.filter((g) => {
+    return g.type === 'FREE'
+  }).length
+
+  const totalMembers = await groupRepositories.getTotalMembers(
+    group.map((g) => g.id)
+  )
+  return {
+    lists: group.map((g) => {
+      return {
+        id: g.id,
+        name: g.name,
+        photo_url: g.photo_url,
+        type: g.type,
+        total_members: g.room._count.room_member
+      }
+    }),
+    paid_grous: vipGroups,
+    free_groups: freeGroups,
+    total_members: totalMembers
+  }
+}
