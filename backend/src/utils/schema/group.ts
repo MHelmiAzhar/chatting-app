@@ -10,5 +10,10 @@ export const groupPaidSchema = groupFreeSchema.extend({
   benefits: z.array(z.string()).min(1, 'Benefits is required')
 })
 
+export const joinFreeGroupSchema = z.object({
+  group_id: z.string().min(1, 'Group ID is required')
+})
+
 export type GroupFreeValues = z.infer<typeof groupFreeSchema>
 export type GroupPaidValues = z.infer<typeof groupPaidSchema>
+export type JoinFreeGroupValues = z.infer<typeof joinFreeGroupSchema>

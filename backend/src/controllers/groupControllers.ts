@@ -1,6 +1,10 @@
 import { NextFunction, Response } from 'express'
 import { CustomRequest } from '../types/CustomRequest'
-import { groupFreeSchema, groupPaidSchema } from '../utils/schema/group'
+import {
+  groupFreeSchema,
+  groupPaidSchema,
+  joinFreeGroupSchema
+} from '../utils/schema/group'
 import * as groupServices from '../services/groupServices'
 
 export const createFreeGroup = async (
@@ -230,6 +234,40 @@ export const getMyOwnGroups = async (
     return res
       .status(200)
       .json({ success: true, message: 'My own groups fetched', data })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const createMemberFreeGroup = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const parse = joinFreeGroupSchema.safeParse(req.body)
+    if (!parse.success) {
+      const errMessage = parse.error.issues.map(
+        (err) => `${err.path} - ${err.message}`
+      )
+      return res.status(400).json({
+        success: false,
+        message: 'Validation Error',
+        detail: errMessage
+      })
+    }
+    const user_id = req.user?.id || ''
+    const result = await groupServices.addMemberFreeGroup(
+      parse.data.group_id,
+      user_id
+    )
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: 'Member added to free group',
+        data: result
+      })
   } catch (error) {
     next(error)
   }

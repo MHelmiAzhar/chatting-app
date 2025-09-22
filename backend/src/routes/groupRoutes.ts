@@ -21,6 +21,11 @@ groupRoutes.post(
   ]),
   groupController.createPaidGroup
 )
+groupRoutes.post(
+  '/join-free',
+  verifyToken,
+  groupController.createMemberFreeGroup
+)
 
 groupRoutes.put(
   '/free/:group_id',

@@ -110,3 +110,20 @@ export const getMyOwnGroups = async (user_id: string) => {
     total_members: totalMembers
   }
 }
+
+export const addMemberFreeGroup = async (group_id: string, user_id: string) => {
+  const checkMember = await groupRepositories.getMemberById(user_id, group_id)
+  if (checkMember) {
+    throw new Error('You are already a member of a group')
+  }
+
+  const group = await groupRepositories.findGroupById(group_id)
+
+  if (group.type !== 'FREE') {
+    throw new Error('This group is not free')
+  }
+
+  await groupRepositories.addMemberToGroup(group.room_id, user_id)
+
+  return true
+}
