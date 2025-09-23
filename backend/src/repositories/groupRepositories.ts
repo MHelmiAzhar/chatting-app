@@ -97,7 +97,21 @@ export const upsertPaidGroup = async (
 export const findGroupById = async (id: string) => {
   return await prisma.group.findFirstOrThrow({
     where: { id },
-    include: { assets: true }
+    include: {
+      assets: true,
+      room: {
+        select: {
+          room_member: {
+            include: { role: true },
+            where: {
+              role: {
+                role: 'OWNER'
+              }
+            }
+          }
+        }
+      }
+    }
   })
 }
 
