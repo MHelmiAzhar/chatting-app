@@ -30,3 +30,21 @@ export const createTransaction = async (
     next(error)
   }
 }
+
+export const updateTransactionStatus = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await transactionService.updateTransactionStatus(
+      req.body.order_id,
+      req.body.transaction_status
+    )
+    res
+      .status(200)
+      .json({ success: true, message: 'Transaction status updated', data })
+  } catch (error) {
+    next(error)
+  }
+}

@@ -9,5 +9,9 @@ transactionRoutes.post(
   verifyToken,
   transactionController.createTransaction
 )
+transactionRoutes.post(
+  '/handle-payment',
+  transactionController.updateTransactionStatus
+)
 
 export default transactionRoutes
