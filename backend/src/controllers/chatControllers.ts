@@ -35,3 +35,20 @@ export const createRoomChatPersonal = async (
     next(error)
   }
 }
+
+export const getRecentRoom = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await chatServices.getRecentRoom(req.user?.id || '')
+    return res.status(200).json({
+      success: true,
+      message: 'Recent room fetched successfully',
+      data
+    })
+  } catch (error) {
+    next(error)
+  }
+}

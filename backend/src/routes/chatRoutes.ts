@@ -4,6 +4,7 @@ import { de } from 'zod/v4/locales'
 import verifyToken from '../middlewares/verifyToken'
 const chatRoutes = express.Router()
 
+chatRoutes.get('/recent', verifyToken, chatController.getRecentRoom)
 chatRoutes.post('/personal', verifyToken, chatController.createRoomChatPersonal)
 
 export default chatRoutes

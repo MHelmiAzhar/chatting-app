@@ -36,3 +36,50 @@ export const createRoomPersonal = async (
     }
   })
 }
+
+export const getRoom = async (user_id: string) => {
+  return await prisma.room.findMany({
+    where: {
+      room_member: { some: { user_id } }
+    },
+    include: {
+      room_message: {
+        select: {
+          context: true,
+          sender: {
+            select: {
+              name: true,
+              photo_url: true
+            }
+          }
+        },
+        take: 1,
+        orderBy: {
+          createdAt: 'desc'
+        }
+      },
+      room_member: {
+        select: {
+          user: {
+            select: {
+              name: true,
+              photo_url: true
+            }
+          }
+        },
+        where: {
+          role: { role: 'MEMBER' }
+        }
+      },
+      Group: {
+        select: {
+          name: true,
+          photo_url: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
+}
