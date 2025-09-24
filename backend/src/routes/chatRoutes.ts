@@ -5,6 +5,7 @@ import verifyToken from '../middlewares/verifyToken'
 const chatRoutes = express.Router()
 
 chatRoutes.get('/recent', verifyToken, chatController.getRecentRoom)
+chatRoutes.get('/room/:room_id', verifyToken, chatController.getRoomMessage)
 chatRoutes.post('/personal', verifyToken, chatController.createRoomChatPersonal)
 
 export default chatRoutes

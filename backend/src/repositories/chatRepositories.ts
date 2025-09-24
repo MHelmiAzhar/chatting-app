@@ -83,3 +83,45 @@ export const getRoom = async (user_id: string) => {
     }
   })
 }
+
+export const getRoomMessage = async (room_id: string) => {
+  return await prisma.room.findMany({
+    where: { id: room_id },
+    select: {
+      id: true,
+      is_group: true,
+      room_message: {
+        select: {
+          context: true,
+          type: true,
+          sender: {
+            select: {
+              id: true,
+              name: true,
+              photo_url: true
+            }
+          },
+          createdAt: true
+        },
+        orderBy: { createdAt: 'desc' }
+      },
+      Group: {
+        select: {
+          name: true,
+          photo_url: true
+        }
+      },
+      room_member: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              photo_url: true
+            }
+          }
+        }
+      }
+    }
+  })
+}

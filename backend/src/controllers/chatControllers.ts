@@ -52,3 +52,20 @@ export const getRecentRoom = async (
     next(error)
   }
 }
+
+export const getRoomMessage = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await chatServices.getRoomMessage(req.params.room_id)
+    return res.status(200).json({
+      success: true,
+      message: 'Room messages fetched successfully',
+      data
+    })
+  } catch (error) {
+    next(error)
+  }
+}
