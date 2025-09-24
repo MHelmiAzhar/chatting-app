@@ -44,6 +44,12 @@ groupRoutes.put(
   groupController.updatePaidGroup
 )
 
+groupRoutes.delete(
+  '/group-asset/:asset_id',
+  verifyToken,
+  groupController.deleteGroupAsset
+)
+
 groupRoutes.get('/peoples', verifyToken, groupController.getDiscoverPeople)
 groupRoutes.get(
   '/detail/:group_id',

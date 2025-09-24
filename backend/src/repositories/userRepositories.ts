@@ -1,4 +1,4 @@
-import { RoleType } from '../generated/prisma'
+import { RoleType } from '@prisma/client'
 import prisma from '../utils/prisma'
 import { SignUpValues } from '../utils/schema/user'
 import crypto from 'node:crypto'

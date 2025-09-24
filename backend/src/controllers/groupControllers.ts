@@ -261,13 +261,27 @@ export const createMemberFreeGroup = async (
       parse.data.group_id,
       user_id
     )
+    return res.status(200).json({
+      success: true,
+      message: 'Member added to free group',
+      data: result
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deleteGroupAsset = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { asset_id } = req.params
+    const data = await groupServices.deleteGroupAsset(asset_id)
     return res
       .status(200)
-      .json({
-        success: true,
-        message: 'Member added to free group',
-        data: result
-      })
+      .json({ success: true, message: 'Group asset deleted', data })
   } catch (error) {
     next(error)
   }
