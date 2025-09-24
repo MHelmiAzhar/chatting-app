@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes'
 import errorHandler from './middlewares/errorHandler'
 import groupRoutes from './routes/groupRoutes'
 import transactionRoutes from './routes/transactionRoutes'
+import chatRoutes from './routes/chatRoutes'
 
 dotenv.config()
 
@@ -22,6 +23,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/v1/auth', userRoutes)
 app.use('/api/v1/groups', groupRoutes)
 app.use('/api/v1/transactions', transactionRoutes)
+app.use('/api/v1/chats', chatRoutes)
 
 app.use(errorHandler)
 const PORT = process.env.PORT || 3000
