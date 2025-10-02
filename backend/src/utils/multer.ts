@@ -17,6 +17,13 @@ const uploadDirGroupPhoto = path.join(
 if (!fs.existsSync(uploadDirGroupPhoto)) {
   fs.mkdirSync(uploadDirGroupPhoto, { recursive: true })
 }
+const uploadFileAttach = path.join(
+  process.cwd(),
+  'public/assets/uploads/attach_messages'
+)
+if (!fs.existsSync(uploadFileAttach)) {
+  fs.mkdirSync(uploadFileAttach, { recursive: true })
+}
 
 const uploadDirGroupAssets = path.join(
   process.cwd(),
@@ -45,6 +52,17 @@ export const storageGroup = multer.diskStorage({
     } else {
       cb(null, uploadDirGroupAssets)
     }
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
+    const extention = file.mimetype.split('/')[1]
+    const fileName = `${file.fieldname}-${uniqueSuffix}.${extention}`
+    cb(null, fileName)
+  }
+})
+export const storageFileAttach = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadFileAttach)
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)

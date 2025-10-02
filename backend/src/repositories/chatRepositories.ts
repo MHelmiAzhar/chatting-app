@@ -1,4 +1,5 @@
 import prisma from '../utils/prisma'
+import { createMessageValues } from '../utils/schema/chat'
 import * as userRepository from './userRepositories'
 export const createRoomPersonal = async (
   sender_id: string,
@@ -46,6 +47,8 @@ export const getRoom = async (user_id: string) => {
       room_message: {
         select: {
           context: true,
+          type: true,
+          content_url: true,
           sender: {
             select: {
               name: true,
@@ -94,6 +97,7 @@ export const getRoomMessage = async (room_id: string) => {
         select: {
           context: true,
           type: true,
+          content_url: true,
           sender: {
             select: {
               id: true,
@@ -123,5 +127,32 @@ export const getRoomMessage = async (room_id: string) => {
         }
       }
     }
+  })
+}
+
+export const createMessage = async (
+  data: createMessageValues,
+  user_id: string,
+  file: Express.Multer.File | undefined
+) => {
+  return await prisma.roomMessage.create({
+    data: {
+      sender_id: user_id,
+      room_id: data.room_id,
+      context: file ? file.filename : data.message,
+      type: file ? 'IMAGE' : 'TEXT'
+    }
+  })
+}
+
+export const findRoomById = async (room_id: string) => {
+  return await prisma.room.findFirstOrThrow({
+    where: { id: room_id }
+  })
+}
+
+export const findMember = async (room_id: string, user_id: string) => {
+  return await prisma.roomMember.findFirst({
+    where: { room_id, user_id }
   })
 }

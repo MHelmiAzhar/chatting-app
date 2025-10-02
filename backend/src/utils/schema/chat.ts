@@ -6,4 +6,9 @@ export const createChatPersonalShema = z
   })
   .strict()
 
+export const createMessageSchema = z.object({
+  message: z.string().min(1, 'Message is required'),
+  room_id: z.string().min(1, 'Room ID is required')
+})
 export type createRoomPersonalValues = z.infer<typeof createChatPersonalShema>
+export type createMessageValues = z.infer<typeof createMessageSchema>
