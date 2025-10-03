@@ -83,3 +83,35 @@ export const updateTransactionStatus = async (
       return {}
   }
 }
+
+export const getRevenueStat = async (user_id: string) => {
+  const transactions = await transactionRepository.getMyTransactions(user_id)
+  const payout = await transactionRepository.getMyPayout(user_id)
+  const group = await groupRepository.getMyOwnGroups(user_id)
+
+  const totalRevenue = transactions.reduce((acc, curr) => {
+    if (curr.status === 'COMPLETED') {
+      return acc + curr.price
+    }
+    return acc
+  }, 0)
+  const totalPayout = payout.reduce((acc, curr) => acc + curr.amount, 0)
+  const balance = totalRevenue - totalPayout
+
+  const totalVipGroups = group.filter((g) => g.type === 'PAID').length
+  const totalVipMembers = group.reduce((acc, curr) => {
+    if (curr.type === 'PAID') {
+      return acc + (curr?.room?._count?.room_member || 0)
+    }
+    return acc
+  }, 0)
+
+  const latestMemberVip = transactions.filter((t) => t.status === 'COMPLETED')
+  return {
+    balance,
+    total_vip_groups: totalVipGroups,
+    total_vip_members: totalVipMembers,
+    total_revenue: totalRevenue,
+    latest_member_vip: latestMemberVip
+  }
+}

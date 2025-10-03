@@ -18,3 +18,33 @@ export const updateTransaction = async (
     data: { status }
   })
 }
+
+export const getMyTransactions = async (user_id: string) => {
+  return await prisma.transaction.findMany({
+    where: {
+      owner_id: user_id
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          photo_url: true
+        }
+      },
+      group: {
+        select: {
+          name: true,
+          photo_url: true
+        }
+      }
+    }
+  })
+}
+
+export const getMyPayout = async (user_id: string) => {
+  return await prisma.payout.findMany({
+    where: {
+      user_id
+    }
+  })
+}

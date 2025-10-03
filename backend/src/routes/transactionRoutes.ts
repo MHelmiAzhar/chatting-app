@@ -14,4 +14,10 @@ transactionRoutes.post(
   transactionController.updateTransactionStatus
 )
 
+transactionRoutes.get(
+  '/revenue-stat',
+  verifyToken,
+  transactionController.getRevenueStat
+)
+
 export default transactionRoutes

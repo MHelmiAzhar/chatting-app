@@ -48,3 +48,18 @@ export const updateTransactionStatus = async (
     next(error)
   }
 }
+
+export const getRevenueStat = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await transactionService.getRevenueStat(req?.user?.id || '')
+    res
+      .status(200)
+      .json({ success: true, message: 'Revenue statistics retrieved', data })
+  } catch (error) {
+    next(error)
+  }
+}
