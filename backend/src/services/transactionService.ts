@@ -115,3 +115,7 @@ export const getRevenueStat = async (user_id: string) => {
     latest_member_vip: latestMemberVip
   }
 }
+
+export const getHistoryPayouts = async (user_id: string) => {
+  return await transactionRepository.getMyPayout(user_id)
+}

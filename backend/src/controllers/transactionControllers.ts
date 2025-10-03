@@ -63,3 +63,18 @@ export const getRevenueStat = async (
     next(error)
   }
 }
+
+export const getHistoryPayouts = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await transactionService.getHistoryPayouts(req?.user?.id || '')
+    res
+      .status(200)
+      .json({ success: true, message: 'History payouts retrieved', data })
+  } catch (error) {
+    next(error)
+  }
+}
