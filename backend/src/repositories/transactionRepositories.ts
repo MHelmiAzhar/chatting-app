@@ -1,5 +1,6 @@
 import { Prisma, TransactionStatus } from '@prisma/client'
 import prisma from '../utils/prisma'
+import { WithDrawValues } from '../utils/schema/transaction'
 
 export const createTransaction = async (
   data: Prisma.TransactionCreateInput
@@ -48,6 +49,19 @@ export const getMyPayout = async (user_id: string) => {
     },
     orderBy: {
       createdAt: 'desc'
+    }
+  })
+}
+
+export const createWithdraw = async (data: WithDrawValues, user_id: string) => {
+  return await prisma.payout.create({
+    data: {
+      amount: data.amount,
+      bank_acc_name: data.bank_account_name,
+      bank_acc_number: data.bank_account_number,
+      bank_name: data.bank_name,
+      user_id,
+      status: 'PENDING'
     }
   })
 }

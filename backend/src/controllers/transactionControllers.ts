@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express'
 import { CustomRequest } from '../types/CustomRequest'
 import * as transactionService from '../services/transactionService'
 import { joinFreeGroupSchema } from '../utils/schema/group'
+import { withdrawSchema } from '../utils/schema/transaction'
 
 export const createTransaction = async (
   req: CustomRequest,
@@ -87,6 +88,32 @@ export const getBalance = async (
   try {
     const data = await transactionService.getBalance(req?.user?.id || '')
     res.status(200).json({ success: true, message: 'Balance retrieved', data })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const createWithdraw = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const parse = withdrawSchema.safeParse(req.body)
+    if (!parse.success) {
+      const errorMessages = parse.error.issues.map((err) => err.message)
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid request body',
+        details: errorMessages
+      })
+    }
+
+    const data = await transactionService.createWithdraw(
+      parse.data,
+      req?.user?.id || ''
+    )
+    res.status(200).json({ success: true, message: 'Withdraw created', data })
   } catch (error) {
     next(error)
   }

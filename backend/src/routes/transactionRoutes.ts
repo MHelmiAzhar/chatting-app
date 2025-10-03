@@ -10,6 +10,11 @@ transactionRoutes.post(
   transactionController.createTransaction
 )
 transactionRoutes.post(
+  '/withdraw',
+  verifyToken,
+  transactionController.createWithdraw
+)
+transactionRoutes.post(
   '/handle-payment',
   transactionController.updateTransactionStatus
 )

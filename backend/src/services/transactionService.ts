@@ -1,6 +1,7 @@
 import * as groupRepository from '../repositories/groupRepositories'
 import * as transactionRepository from '../repositories/transactionRepositories'
 import * as userRepository from '../repositories/userRepositories'
+import { WithDrawValues } from '../utils/schema/transaction'
 
 export const createTransaction = async (group_id: string, user_id: string) => {
   const checkMember = await groupRepository.getMemberById(user_id, group_id)
@@ -133,4 +134,13 @@ export const getBalance = async (user_id: string) => {
   const totalPayout = payout.reduce((acc, curr) => acc + curr.amount, 0)
   const balance = totalRevenue - totalPayout
   return { balance }
+}
+
+export const createWithdraw = async (data: WithDrawValues, user_id: string) => {
+  const balanceData = await getBalance(user_id)
+  if (data.amount > balanceData.balance) {
+    throw new Error('Insufficient balance')
+  }
+
+  return await transactionRepository.createWithdraw(data, user_id)
 }
