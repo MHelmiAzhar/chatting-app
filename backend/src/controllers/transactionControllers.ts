@@ -78,3 +78,16 @@ export const getHistoryPayouts = async (
     next(error)
   }
 }
+
+export const getBalance = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await transactionService.getBalance(req?.user?.id || '')
+    res.status(200).json({ success: true, message: 'Balance retrieved', data })
+  } catch (error) {
+    next(error)
+  }
+}

@@ -26,4 +26,6 @@ transactionRoutes.get(
   transactionController.getHistoryPayouts
 )
 
+transactionRoutes.get('/balance', verifyToken, transactionController.getBalance)
+
 export default transactionRoutes

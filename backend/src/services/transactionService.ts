@@ -119,3 +119,18 @@ export const getRevenueStat = async (user_id: string) => {
 export const getHistoryPayouts = async (user_id: string) => {
   return await transactionRepository.getMyPayout(user_id)
 }
+
+export const getBalance = async (user_id: string) => {
+  const transactions = await transactionRepository.getMyTransactions(user_id)
+  const payout = await transactionRepository.getMyPayout(user_id)
+
+  const totalRevenue = transactions.reduce((acc, curr) => {
+    if (curr.status === 'COMPLETED') {
+      return acc + curr.price
+    }
+    return acc
+  }, 0)
+  const totalPayout = payout.reduce((acc, curr) => acc + curr.amount, 0)
+  const balance = totalRevenue - totalPayout
+  return { balance }
+}
