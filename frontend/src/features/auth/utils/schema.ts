@@ -1,9 +1,10 @@
 import { z } from 'zod'
 
 export const signUpSchema = z.object({
-  avatar: z
+  photo: z
     .any()
-    .refine((file: File) => file?.type.startsWith('image/'), {
+    .refine((files: FileList) => files?.length > 0, 'Avatar is required.')
+    .refine((files: FileList) => files?.[0]?.type.startsWith('image/'), {
       message: 'File must be an image'
     }),
   name: z.string().min(2, 'Name must be at least 2 characters long'),
